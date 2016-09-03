@@ -1,6 +1,41 @@
 #include <iostream>
 #include <string>
 #include <cassert>
+#include <array>
+
+class converter
+{
+public:
+    void chain(converter* next) {
+        this->next = next;
+    }
+    void push(char c) {
+        if (c == this->c) {
+            ++a;
+        } else {
+            flush();
+            a = 1;
+            this->c = c;
+        }
+    }
+    void flush() {
+        if (a > 0) {
+            std::string s = std::to_string(a) + static_cast<char>(c);
+            l += s.length();
+            if (next)
+                for (char c : s)
+                    next->push(c);
+        }
+    }
+    int size() const {
+        return l;
+    }
+private:
+    converter* next = nullptr;
+    int c = -1;
+    int a = 0;
+    int l = 0;
+};
 
 std::string step(const std::string& s) {
     assert(!s.empty());
@@ -29,13 +64,27 @@ int main() {
     assert(step("1211") == "111221");
     assert(step("111221") == "312211");
 
+    const int steps = 40;
+
     std::string s = "3113322113";
-    for (int i = 0; i < 40; ++i)
-        s = step(s);
 
-    assert(s.length() == 329356);
+    // Simple implementation
+    std::string t(s);
+    for (int i = 0; i < steps; ++i)
+        t = step(t);
+    assert(t.length() == 329356);
+    std::cout << t.length() << "\n";
 
-    std::cout << s.length() << "\n";
+    // Memory efficient implementation
+    std::array<converter, steps> converters;
+    for (size_t i = 1; i < converters.size(); ++i)
+        converters[i - 1].chain(&converters[i]);
+    for (char c : s)
+        converters.front().push(c);
+    for (auto& c : converters)
+        c.flush();
+    assert(converters.back().size() == 329356);
+    std::cout << converters.back().size() << "\n";
 
     return 0;
 }
