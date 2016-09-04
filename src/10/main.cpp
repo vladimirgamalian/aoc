@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 #include <cassert>
-#include <array>
+#include <vector>
 
 class converter
 {
@@ -57,6 +57,29 @@ std::string step(const std::string& s) {
     return result;
 }
 
+int solve_simple(std::string s, int steps) {
+    for (int i = 0; i < steps; ++i)
+        s = step(s);
+    return s.length();
+}
+
+int solve_mem_eff(std::string s, int steps) {
+    std::vector<converter> converters(steps);
+    for (size_t i = 1; i < converters.size(); ++i)
+        converters[i - 1].chain(&converters[i]);
+    for (char c : s)
+        converters.front().push(c);
+    for (auto& c : converters)
+        c.flush();
+    return converters.back().size();
+}
+
+int solve(std::string s, int steps) {
+    int result = solve_simple(s, steps);
+    assert(result == solve_mem_eff(s, steps));
+    return result;
+}
+
 int main() {
     assert(step("1") == "11");
     assert(step("11") == "21");
@@ -64,27 +87,9 @@ int main() {
     assert(step("1211") == "111221");
     assert(step("111221") == "312211");
 
-    const int steps = 40;
-
     std::string s = "3113322113";
-
-    // Simple implementation
-    std::string t(s);
-    for (int i = 0; i < steps; ++i)
-        t = step(t);
-    assert(t.length() == 329356);
-    std::cout << t.length() << "\n";
-
-    // Memory efficient implementation
-    std::array<converter, steps> converters;
-    for (size_t i = 1; i < converters.size(); ++i)
-        converters[i - 1].chain(&converters[i]);
-    for (char c : s)
-        converters.front().push(c);
-    for (auto& c : converters)
-        c.flush();
-    assert(converters.back().size() == 329356);
-    std::cout << converters.back().size() << "\n";
+    std::cout << solve(s, 40) << "\n";
+    std::cout << solve(s, 50) << "\n";
 
     return 0;
 }
