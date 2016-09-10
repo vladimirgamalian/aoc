@@ -43,9 +43,7 @@ relations read_relations(const std::string& file_name) {
     return result;
 }
 
-int main() {
-    relations r = read_relations("input.txt");
-
+int solve(relations& r) {
     std::vector<std::string> names;
     for (const auto& k : r)
         names.push_back(k.first);
@@ -57,16 +55,20 @@ int main() {
         permutations[i] = i;
 
     int max_happiness = calc_happiness(r, names, permutations);
-    std::vector<int> best_pos(permutations);
     while (next_set(&permutations[0], permutations.size())) {
         int happiness = calc_happiness(r, names, permutations);
         if (happiness > max_happiness) {
             max_happiness = happiness;
-            best_pos = permutations;
         }
     };
 
-    std::cout << max_happiness << "\n";
+    return max_happiness;
+}
 
+int main() {
+    relations r = read_relations("input.txt");
+    std::cout << solve(r) << "\n";
+    r["Me"][""] = 0;
+    std::cout << solve(r) << "\n";
     return 0;
 }
