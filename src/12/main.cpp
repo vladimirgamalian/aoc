@@ -1,15 +1,8 @@
 #include <iostream>
-#include <fstream>
-#include <string>
-#include <streambuf>
+#include "../common/read_file.h"
 #include "../common/json.hpp"
 
 using json = nlohmann::json;
-
-std::string readFile(const std::string& file_name) {
-    std::ifstream ifs(file_name);
-    return std::string((std::istreambuf_iterator<char>(ifs)), std::istreambuf_iterator<char>());
-}
 
 int recursive_pass(const json& j, bool exclude_red) {
     int sum = 0;
@@ -34,7 +27,7 @@ int recursive_pass(const json& j, bool exclude_red) {
 }
 
 int main() {
-    json j = json::parse(readFile("input.txt"));
+    json j = json::parse(read_file("input.txt"));
     std::cout << recursive_pass(j, false) << "\n";
     std::cout << recursive_pass(j, true) << "\n";
     return 0;
