@@ -28,7 +28,7 @@ int calc_happiness(relations& r,
 
 relations read_relations(const std::string& file_name) {
     std::vector<std::string> input = read_file_lines(file_name);
-    std::regex e("^(\\w+) would (gain|lose) (\\d+) happiness units by sitting next to (\\w+).$");
+    std::regex e("^(\\w+) would (gain|lose) (\\d+) happiness units by sitting next to (\\w+)\\.$");
     relations result;
     for (const auto& s : input) {
         std::smatch sm;
