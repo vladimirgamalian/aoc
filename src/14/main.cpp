@@ -63,7 +63,7 @@ int main() {
             max_distance = d;
     }
 
-    std::cout << max_distnace << std::endl;
+    std::cout << max_distance << std::endl;
 
     return 0;
 }
