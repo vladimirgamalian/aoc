@@ -8,20 +8,16 @@
 class reindeer {
 public:
     reindeer(std::string name, int speed, int fly_time, int rest_time) :
-            name(name), speed(speed), fly_time(fly_time), rest_time(rest_time), counter(0) {}
+            name(name), speed(speed), fly_time(fly_time), rest_time(rest_time), counter(fly_time) {}
 
     void step() {
-        if (!rest) {
+        if (!rest)
             distance += speed;
-        }
-        ++counter;
-        if (rest && counter == rest_time) {
-            rest = false;
-            counter = 0;
-        }
-        if (!rest && counter == fly_time) {
-            rest = true;
-            counter = 0;
+
+        --counter;
+        if (!counter) {
+            rest = !rest;
+            counter = rest ? rest_time : fly_time;
         }
     }
 
@@ -54,14 +50,20 @@ std::vector<reindeer> read_data(const std::string& file_name) {
 
 int main() {
     std::vector<reindeer> data = read_data("input.txt");
-    const int total_time = 1000;
+    const int total_time = 2503;
     for (int i = 0; i < total_time; ++i) {
         for (auto& r : data)
             r.step();
     }
 
-    for (auto& r : data)
-        std::cout << r.name << " " << r.get_distance() << "\n";
+    int max_distance = 0;
+    for (auto& r : data) {
+        int d = r.get_distance();
+        if (d > max_distance)
+            max_distance = d;
+    }
+
+    std::cout << max_distnace << std::endl;
 
     return 0;
 }
