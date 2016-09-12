@@ -21,8 +21,16 @@ public:
         }
     }
 
+    void add_score() {
+        ++score;
+    }
+
     int get_distance() const {
         return distance;
+    }
+
+    int get_score() const {
+        return score;
     }
 
     std::string name;
@@ -31,6 +39,7 @@ public:
     int rest_time;
 
 private:
+    int score = 0;
     int distance = 0;
     bool rest = false;
     int counter;
@@ -48,22 +57,40 @@ std::vector<reindeer> read_data(const std::string& file_name) {
     return result;
 }
 
-int main() {
-    std::vector<reindeer> data = read_data("input.txt");
-    const int total_time = 2503;
-    for (int i = 0; i < total_time; ++i) {
-        for (auto& r : data)
-            r.step();
-    }
-
+int get_max_distance(const std::vector<reindeer>& data) {
     int max_distance = 0;
     for (auto& r : data) {
         int d = r.get_distance();
         if (d > max_distance)
             max_distance = d;
     }
+    return max_distance;
+}
 
-    std::cout << max_distance << std::endl;
+int get_max_score(const std::vector<reindeer>& data) {
+    int max_score = 0;
+    for (auto& r : data) {
+        int d = r.get_score();
+        if (d > max_score)
+            max_score = d;
+    }
+    return max_score;
+}
+
+int main() {
+    std::vector<reindeer> data = read_data("input.txt");
+    const int total_time = 2503;
+    for (int i = 0; i < total_time; ++i) {
+        for (auto& r : data)
+            r.step();
+        int m = get_max_distance(data);
+        for (auto& r : data)
+            if (r.get_distance() == m)
+                r.add_score();
+    }
+
+    std::cout << get_max_distance(data) << std::endl;
+    std::cout << get_max_score(data) << std::endl;
 
     return 0;
 }
